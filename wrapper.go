@@ -5,16 +5,15 @@ import (
 	"reflect"
 
 	"github.com/DaHuangQwQ/ginx/openapi"
-	"github.com/DaHuangQwQ/gpkg/logger"
 	"github.com/gin-gonic/gin"
 )
 
 var (
-	L   logger.Logger
+	L   Logger
 	Oai = openapi.NewOpenAPI()
 )
 
-func NewWarpLogger(l logger.Logger) {
+func NewWarpLogger(l Logger) {
 	L = l
 }
 
@@ -69,7 +68,7 @@ func WrapWithToken[Req any, Res any](fn func(ctx *gin.Context, req Req, u UserCl
 		result, err := fn(ctx, req, user)
 		if err != nil {
 			ctx.JSON(http.StatusOK, result)
-			L.Info("系统错误", logger.Field{Key: "err", Val: err})
+			L.Info("系统错误", Field{Key: "err", Val: err})
 			return
 		}
 		ctx.JSON(http.StatusOK, result)
@@ -118,7 +117,7 @@ func Wrap[Req any, Res any](fn func(ctx *gin.Context, req Req) (Result[Res], err
 		result, err := fn(ctx, req)
 		if err != nil {
 			ctx.JSON(http.StatusOK, result)
-			L.Info("系统错误", logger.Field{Key: "err", Val: err})
+			L.Info("系统错误", Field{Key: "err", Val: err})
 			return
 		}
 		ctx.JSON(http.StatusOK, result)

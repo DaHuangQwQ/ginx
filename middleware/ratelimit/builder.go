@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/DaHuangQwQ/gpkg/logger"
-	"github.com/DaHuangQwQ/gpkg/ratelimit"
+	"github.com/DaHuangQwQ/ginx"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,11 +14,11 @@ type Option func(builder *Builder)
 
 type Builder struct {
 	prefix  string
-	limiter ratelimit.Limiter
-	l       logger.Logger
+	limiter ginx.Limiter
+	l       ginx.Logger
 }
 
-func NewBuilder(limiter ratelimit.Limiter, l logger.Logger, opts ...Option) *Builder {
+func NewBuilder(limiter ginx.Limiter, l ginx.Logger, opts ...Option) *Builder {
 	res := &Builder{
 		prefix:  "ip-limiter",
 		limiter: limiter,
@@ -40,12 +40,12 @@ func (b *Builder) Build() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		limited, err := b.limiter.Limit(ctx, fmt.Sprintf("%s:%s", b.prefix, ctx.ClientIP()))
 		if err != nil {
-			b.l.Warn("限流 redis 宕机了", logger.Error(err))
+			b.l.Warn("限流 redis 宕机了")
 			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
 		if limited {
-			b.l.Warn("限流了", logger.String("ip", ctx.ClientIP()))
+			b.l.Warn("限流了" + ctx.ClientIP())
 			ctx.AbortWithStatus(http.StatusTooManyRequests)
 			return
 		}

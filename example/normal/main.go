@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/DaHuangQwQ/gpkg/ginx"
+	"github.com/DaHuangQwQ/ginx"
 	"github.com/gin-gonic/gin"
 )
 

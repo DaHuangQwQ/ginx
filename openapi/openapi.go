@@ -5,7 +5,6 @@ import (
 	"log/slog"
 	"net/http"
 	"reflect"
-	"slices"
 	"strconv"
 	"strings"
 
@@ -38,24 +37,24 @@ func (openAPI *OpenAPI) Generator() *openapi3gen.Generator {
 }
 
 // Compute the tags to declare at the root of the OpenAPI spec from the tags declared in the operations.
-func (openAPI *OpenAPI) computeTags() {
-	for _, pathItem := range openAPI.Description().Paths.Map() {
-		for _, op := range pathItem.Operations() {
-			for _, tag := range op.Tags {
-				if openAPI.Description().Tags.Get(tag) == nil {
-					openAPI.Description().Tags = append(openAPI.Description().Tags, &openapi3.Tag{
-						Name: tag,
-					})
-				}
-			}
-		}
-	}
-
-	// Make sure tags are sorted
-	slices.SortFunc(openAPI.Description().Tags, func(a, b *openapi3.Tag) int {
-		return strings.Compare(a.Name, b.Name)
-	})
-}
+//func (openAPI *OpenAPI) computeTags() {
+//	for _, pathItem := range openAPI.Description().Paths.Map() {
+//		for _, op := range pathItem.Operations() {
+//			for _, tag := range op.Tags {
+//				if openAPI.Description().Tags.Get(tag) == nil {
+//					openAPI.Description().Tags = append(openAPI.Description().Tags, &openapi3.Tag{
+//						Name: tag,
+//					})
+//				}
+//			}
+//		}
+//	}
+//
+//	// Make sure tags are sorted
+//	slices.SortFunc(openAPI.Description().Tags, func(a, b *openapi3.Tag) int {
+//		return strings.Compare(a.Name, b.Name)
+//	})
+//}
 
 // getOrCreateSchema is used to get a schema from the OpenAPI spec.
 // If the schema does not exist, it will create a new schema and add it to the OpenAPI spec.

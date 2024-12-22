@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/DaHuangQwQ/gpkg/ginx"
-	"github.com/DaHuangQwQ/gpkg/ginx/middleware/prometheus"
+	"github.com/DaHuangQwQ/ginx"
+	"github.com/DaHuangQwQ/ginx/middleware/prometheus"
 	"github.com/gin-gonic/gin"
 )
 

@@ -4,27 +4,27 @@ import (
 	"net/http"
 	"time"
 
-	ijwt "github.com/DaHuangQwQ/gpkg/ginx/jwt"
-	"github.com/ecodeclub/ekit/set"
+	ijwt "github.com/DaHuangQwQ/ginx/jwt"
 	"github.com/gin-gonic/gin"
 )
 
 type Builder struct {
-	publicPaths set.Set[string]
+	publicPaths map[string]struct{}
 
 	ijwt.Handler
 }
 
 func NewBuilder(handler ijwt.Handler) *Builder {
 	return &Builder{
-		publicPaths: set.NewMapSet[string](16),
+		publicPaths: make(map[string]struct{}, 16),
 		Handler:     handler,
 	}
 }
 
 func (b *Builder) Build() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if b.publicPaths.Exist(ctx.Request.URL.Path) {
+		_, ok := b.publicPaths[ctx.Request.URL.Path]
+		if ok {
 			return
 		}
 
@@ -70,7 +70,7 @@ func (b *Builder) Build() gin.HandlerFunc {
 
 func (b *Builder) IgnorePaths(path ...string) *Builder {
 	for _, p := range path {
-		b.publicPaths.Add(p)
+		b.publicPaths[p] = struct{}{}
 	}
 	return b
 }
