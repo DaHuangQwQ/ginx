@@ -1,12 +1,13 @@
 package openapi
 
 import (
-	"github.com/getkin/kin-openapi/openapi3"
 	"log/slog"
 	"reflect"
 	"slices"
 	"strconv"
 	"strings"
+
+	"github.com/getkin/kin-openapi/openapi3"
 )
 
 // SchemaTag is a struct that holds the name of the struct and the associated openapi3.SchemaRef

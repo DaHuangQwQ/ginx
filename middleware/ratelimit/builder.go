@@ -3,10 +3,11 @@ package ratelimit
 import (
 	_ "embed"
 	"fmt"
+	"net/http"
+
 	"github.com/DaHuangQwQ/gpkg/logger"
 	"github.com/DaHuangQwQ/gpkg/ratelimit"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type Option func(builder *Builder)

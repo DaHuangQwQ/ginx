@@ -3,11 +3,12 @@ package jwt
 import (
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-	"strings"
-	"time"
 )
 
 type LocalJWTOption func(*LocalJWTHandler)

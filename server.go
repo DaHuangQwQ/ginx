@@ -3,11 +3,12 @@ package ginx
 import (
 	"encoding/json"
 	"errors"
-	"github.com/DaHuangQwQ/ginx/openapi"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/DaHuangQwQ/ginx/openapi"
+	"github.com/gin-gonic/gin"
 )
 
 type Server struct {

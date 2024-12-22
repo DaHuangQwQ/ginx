@@ -4,9 +4,10 @@ package e2e
 
 import (
 	"encoding/json"
+	"testing"
+
 	"github.com/DaHuangQwQ/ginx"
 	"github.com/gin-gonic/gin"
-	"testing"
 )
 
 func TestServer(t *testing.T) {

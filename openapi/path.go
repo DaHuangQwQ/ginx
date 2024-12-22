@@ -1,9 +1,10 @@
 package openapi
 
 import (
+	"strings"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gin-gonic/gin"
-	"strings"
 )
 
 type Path[Res, Req any] struct {

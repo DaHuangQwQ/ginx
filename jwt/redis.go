@@ -3,12 +3,13 @@ package jwt
 import (
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
-	"strings"
-	"time"
 )
 
 var _ Handler = &RedisJWTHandler{}
