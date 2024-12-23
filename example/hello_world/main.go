@@ -25,7 +25,7 @@ func getUser(ctx *gin.Context, req UserGetReq) (ginx.Result[UserGetRes], error) 
 }
 
 func main() {
-	server := ginx.NewServer()
+	server := ginx.NewServer(":8080")
 	server.Handle(ginx.Wrap[UserGetReq, UserGetRes](getUser))
-	_ = server.Start(":8080")
+	_ = server.Start()
 }

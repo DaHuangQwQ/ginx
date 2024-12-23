@@ -1,89 +1,142 @@
 package ginx
 
 import (
-	"reflect"
 	"testing"
 
-	"github.com/DaHuangQwQ/ginx/openapi"
+	"github.com/stretchr/testify/require"
+
 	"github.com/gin-gonic/gin"
 )
 
 func TestServer_marshalSpec(t *testing.T) {
-	type fields struct {
-		Engine  *gin.Engine
-		OpenAPI openapi.OpenAPI
+	testCases := []struct {
+		name string
+
+		server *Server
+
+		wantRes string
+		wantErr error
+	}{
+		{
+			name: "normal",
+			server: func() *Server {
+				server := NewServer(":8081")
+				server.Handle(Wrap[UserGetReq, UserGetRes](getUser))
+				return server
+			}(),
+
+			wantRes: ``,
+		},
 	}
-	tests := []struct {
-		name    string
-		fields  fields
-		want    []byte
-		wantErr bool
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &Server{
-				Engine:  tt.fields.Engine,
-				OpenAPI: tt.fields.OpenAPI,
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			b, err := tc.server.MarshalSpec()
+			require.NoError(t, err)
+			println(string(b))
+			require.Equal(t, string(b), `{
+	"components": {
+		"schemas": {
+			"UserGetReq": {
+				"description": "UserGetReq schema",
+				"properties": {
+					"id": {
+						"maximum": 32,
+						"minimum": 1,
+						"type": "integer"
+					}
+				},
+				"required": [
+					"id"
+				],
+				"type": "object"
+			},
+			"UserGetRes": {
+				"description": "UserGetRes schema",
+				"properties": {
+					"code": {
+						"type": "integer"
+					}
+				},
+				"type": "object"
 			}
-			got, err := s.marshalSpec()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("marshalSpec() error = %v, wantErr %v", err, tt.wantErr)
-				return
+		}
+	},
+	"info": {
+		"description": "123",
+		"title": "OpenAPI",
+		"version": "0.0.1"
+	},
+	"openapi": "3.1.0",
+	"paths": {
+		"users/:id": {
+			"get": {
+				"description": "#### Controller: \n\n`+"`users/:id`"+`\n\n---\n\n",
+				"operationId": "GET_users/:id",
+				"requestBody": {
+					"content": {
+						"*/*": {
+							"schema": {
+								"$ref": "#/components/schemas/UserGetReq"
+							}
+						}
+					},
+					"description": "Request body for ginx.UserGetReq",
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserGetRes"
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"$ref": "#/components/schemas/UserGetRes"
+								}
+							}
+						},
+						"description": "OK"
+					},
+					"default": {
+						"description": ""
+					}
+				},
+				"summary": "users/:id"
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("marshalSpec() got = %v, want %v", got, tt.want)
-			}
+		}
+	}
+}`)
 		})
 	}
 }
 
-func TestServer_saveOpenAPIToFile(t *testing.T) {
-	type fields struct {
-		Engine  *gin.Engine
-		OpenAPI openapi.OpenAPI
-	}
-	type args struct {
-		path string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &Server{
-				Engine:  tt.fields.Engine,
-				OpenAPI: tt.fields.OpenAPI,
-			}
-			if err := s.saveOpenAPIToFile(tt.args.path); (err != nil) != tt.wantErr {
-				t.Errorf("saveOpenAPIToFile() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
+type UserGetReq struct {
+	Meta `method:"GET" path:"/users/:id"`
+	Id   int `json:"id" validate:"required,min=1,max=32"`
 }
 
-func TestServer_registerOpenAPIRoutes(t *testing.T) {
-	type fields struct {
-		Engine  *gin.Engine
-		OpenAPI openapi.OpenAPI
-	}
-	type args struct {
-		path string
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &Server{
-				Engine:  tt.fields.Engine,
-				OpenAPI: tt.fields.OpenAPI,
-			}
-			s.registerOpenAPIRoutes(tt.args.path)
-		})
+type UserGetRes struct {
+	Code int `json:"code"`
+}
+
+func getUser(ctx *gin.Context, req UserGetReq) (Result[UserGetRes], error) {
+	return Result[UserGetRes]{
+		Code: 0,
+		Msg:  "ok",
+		Data: UserGetRes{
+			Code: 1,
+		},
+	}, nil
+}
+
+func TestServer_RegisterOpenAPIRoutes(t *testing.T) {
+	server := NewServer(":8081")
+	server.Handle(Wrap[UserGetReq, UserGetRes](getUser))
+	server.RegisterOpenAPIRoutes("/openapi")
+	err := server.Start()
+	if err != nil {
+		return
 	}
 }

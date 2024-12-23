@@ -95,7 +95,8 @@ func NewOpenApiSpec() openapi3.T {
 		Version:     "0.0.1",
 	}
 	spec := openapi3.T{
-		OpenAPI:  "3.1.0",
+		//OpenAPI:  "3.1.0",
+		OpenAPI:  "3.0.1",
 		Info:     info,
 		Paths:    &openapi3.Paths{},
 		Servers:  []*openapi3.Server{},

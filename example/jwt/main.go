@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	server := ginx.NewServer()
+	server := ginx.NewServer(":8080")
 	jwtHandler := ijwt.NewLocalJWTHandler(
 		[]byte("moyn8y9abnd7q4zkq2m73yw8tu9j5ixm"),
 		[]byte("moyn8y9abnd7q4zkq2m73yw8tu9j5ixA"),
@@ -29,5 +29,5 @@ func main() {
 			Data: fmt.Sprintf("hello world %d", claims.Uid),
 		})
 	})
-	_ = server.Start(":8081")
+	_ = server.Start()
 }

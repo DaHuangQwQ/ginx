@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	server := ginx.NewServer()
+	server := ginx.NewServer(":8081")
 
 	builder := prometheus.Builder{
 		Namespace:  "test",
@@ -26,5 +26,5 @@ func main() {
 			Data: "hello world",
 		})
 	})
-	_ = server.Start(":8081")
+	_ = server.Start()
 }
