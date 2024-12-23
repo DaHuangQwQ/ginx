@@ -95,8 +95,7 @@ func NewOpenApiSpec() openapi3.T {
 		Version:     "0.0.1",
 	}
 	spec := openapi3.T{
-		//OpenAPI:  "3.1.0",
-		OpenAPI:  "3.0.1",
+		OpenAPI:  "3.1.0",
 		Info:     info,
 		Paths:    &openapi3.Paths{},
 		Servers:  []*openapi3.Server{},
@@ -209,7 +208,7 @@ func registerOpenAPIOperation[T, B any](openapi *OpenAPI, route Path[T, B]) (*op
 	}
 	for _, params := range route.Operation.Parameters {
 		if params.Value.In == "path" {
-			if !strings.Contains(route.Path, "{"+params.Value.Name) {
+			if !strings.Contains(route.Path, ":"+params.Value.Name) {
 				panic(fmt.Errorf("path parameter '%s' is not declared in the path", params.Value.Name))
 			}
 		}

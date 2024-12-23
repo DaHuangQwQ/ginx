@@ -18,18 +18,18 @@ type Path[Res, Req any] struct {
 	Middlewares          []gin.HandlerFunc
 }
 
-func (p Path[Res, Req]) GenerateDefaultOperationID() {
+func (p *Path[Res, Req]) GenerateDefaultOperationID() {
 	p.Operation.OperationID = p.Method + "_" + strings.ReplaceAll(strings.ReplaceAll(p.Path, "{", ":"), "}", "")
 }
 
-func (p Path[Res, Req]) GenerateDefaultDescription() {
+func (p *Path[Res, Req]) GenerateDefaultDescription() {
 	if p.overrideDescription {
 		return
 	}
 	p.Operation.Description = DefaultDescription(p.FullName, p.Middlewares) + p.Operation.Description
 }
 
-func (p Path[Res, Req]) NameFromNamespace(human any) string {
+func (p *Path[Res, Req]) NameFromNamespace(human any) string {
 	ss := strings.Split(p.FullName, ".")
 	return ss[len(ss)-1]
 }
