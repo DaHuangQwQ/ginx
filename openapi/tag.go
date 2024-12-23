@@ -17,7 +17,8 @@ type SchemaTag struct {
 }
 
 // parseStructTags parses struct tags and modifies the schema accordingly.
-// t must be a struct type.
+// it must be a struct type.
+// 解析结构体字段Tag => OpenAPI schema
 // It adds the following struct tags (tag => OpenAPI schema field):
 // - description => description
 // - example => example
@@ -93,7 +94,6 @@ func parseStructTags(t reflect.Type, schemaRef *openapi3.SchemaRef) {
 					minPtr := float64(min)
 					propertyValue.Min = &minPtr
 				} else if propertyValue.Type.Is(openapi3.TypeString) {
-					//nolint:gosec // disable G115
 					propertyValue.MinLength = uint64(min)
 				}
 			}
@@ -106,7 +106,6 @@ func parseStructTags(t reflect.Type, schemaRef *openapi3.SchemaRef) {
 					maxPtr := float64(max)
 					propertyValue.Max = &maxPtr
 				} else if propertyValue.Type.Is(openapi3.TypeString) {
-					//nolint:gosec // disable G115
 					maxPtr := uint64(max)
 					propertyValue.MaxLength = &maxPtr
 				}

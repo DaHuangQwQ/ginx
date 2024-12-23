@@ -87,6 +87,20 @@ func (openAPI *OpenAPI) createSchema(key string, v any) *openapi3.SchemaRef {
 	return schemaRef
 }
 
+func (openAPI *OpenAPI) buildOpenapi3Response(description string, response Response) *openapi3.Response {
+	if response.Type == nil {
+		panic("Type in Response cannot be nil")
+	}
+
+	responseSchema := SchemaTagFromType(openAPI, response.Type)
+	if len(response.ContentTypes) == 0 {
+		response.ContentTypes = []string{"application/json", "application/xml"}
+	}
+
+	content := openapi3.NewContentWithSchemaRef(&responseSchema.SchemaRef, response.ContentTypes)
+	return openapi3.NewResponse().WithDescription(description).WithContent(content)
+}
+
 func NewOpenApiSpec() openapi3.T {
 	const openapiDescription = "123"
 	info := &openapi3.Info{
@@ -225,4 +239,12 @@ func newRequestBody[RequestBody any](tag SchemaTag, consumes []string) *openapi3
 		WithRequired(true).
 		WithDescription("Request body for " + reflect.TypeOf(*new(RequestBody)).String()).
 		WithContent(content)
+}
+
+// Registers a response for the route, only if error for this code is not already set.
+func addResponseIfNotSet(openapi *OpenAPI, operation *openapi3.Operation, code int, description string, response Response) {
+	if operation.Responses.Value(strconv.Itoa(code)) != nil {
+		return
+	}
+	operation.AddResponse(code, openapi.buildOpenapi3Response(description, response))
 }

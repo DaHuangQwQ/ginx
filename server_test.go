@@ -3,6 +3,8 @@ package ginx
 import (
 	"testing"
 
+	"github.com/DaHuangQwQ/ginx/middleware/prometheus"
+
 	"github.com/stretchr/testify/require"
 
 	"github.com/gin-gonic/gin"
@@ -66,6 +68,27 @@ func TestServer_RegisterOpenAPIRoutes(t *testing.T) {
 	//server := NewServer(":8081")
 	//server.Handle(Wrap[UserGetReq, UserGetRes](getUser))
 	//server.RegisterOpenAPIRoutes("/openapi")
+	//err := server.Start()
+	//if err != nil {
+	//	return
+	//}
+}
+
+func TestServer_RegisterOpenAPIMiddleware(t *testing.T) {
+	server := NewServer(":8081")
+	builder := prometheus.Builder{
+		Namespace:  "test",
+		Subsystem:  "test",
+		Name:       "user",
+		InstanceId: "1",
+		Help:       "1",
+	}
+	server.Use(builder.BuildActiveRequest())
+	server.Use(builder.BuildResponseTime())
+	server.RegisterOpenAPIMiddleware()
+	server.Handle(Wrap[UserGetReq, UserGetRes](getUser))
+
+	server.RegisterOpenAPIRoutes("/openapi")
 	//err := server.Start()
 	//if err != nil {
 	//	return

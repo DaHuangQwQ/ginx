@@ -81,6 +81,10 @@ func (s *Server) RegisterOpenAPIRoutes(path string) {
 	)))
 }
 
+func (s *Server) RegisterOpenAPIMiddleware() {
+	middlewares = s.Engine.Handlers
+}
+
 // 转换 http.HandlerFunc 为 Gin HandlerFunc
 func httpToGinHandler(httpHandler http.HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {

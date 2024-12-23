@@ -7,6 +7,7 @@ import (
 )
 
 // FuncName returns the name of a function and the name with package path
+// 返回 函数名 和 包名
 func FuncName(f interface{}) string {
 	return strings.TrimSuffix(runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name(), "-fm")
 }

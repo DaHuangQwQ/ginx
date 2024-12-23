@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	L   Logger
-	Oai = openapi.NewOpenAPI()
+	L           Logger
+	Oai         = openapi.NewOpenAPI()
+	middlewares []gin.HandlerFunc
 )
 
 func NewWarpLogger(l Logger) {
@@ -31,7 +32,6 @@ func WrapWithToken[Req any, Res any](fn func(ctx *gin.Context, req Req, u UserCl
 			method = field.Tag.Get("method")
 		}
 	}
-
 	route := openapi.Path[Res, Req]{
 		Operation:            nil,
 		FullName:             "",
@@ -39,7 +39,7 @@ func WrapWithToken[Req any, Res any](fn func(ctx *gin.Context, req Req, u UserCl
 		AcceptedContentTypes: nil,
 		DefaultStatusCode:    0,
 		Method:               method,
-		Middlewares:          nil,
+		Middlewares:          middlewares,
 	}
 	err := route.RegisterOpenAPIOperation(Oai)
 	if err != nil {
@@ -106,7 +106,7 @@ func Wrap[Req any, Res any](fn func(ctx *gin.Context, req Req) (Result[Res], err
 		AcceptedContentTypes: nil,
 		DefaultStatusCode:    0,
 		Method:               method,
-		Middlewares:          nil,
+		Middlewares:          middlewares,
 	}
 	err := route.RegisterOpenAPIOperation(Oai)
 	if err != nil {
