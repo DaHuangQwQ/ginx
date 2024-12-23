@@ -55,6 +55,15 @@ func WrapWithToken[Req any, Res any](fn func(ctx *gin.Context, req Req, u UserCl
 			})
 			return
 		}
+
+		if err := ctx.BindUri(&req); err != nil {
+			ctx.JSON(http.StatusOK, Result[Res]{
+				Code: 5,
+				Msg:  "参数错误" + err.Error(),
+			})
+			return
+		}
+
 		res := ctx.MustGet("claims")
 		if res == nil {
 			ctx.AbortWithStatus(http.StatusUnauthorized)
@@ -106,7 +115,16 @@ func Wrap[Req any, Res any](fn func(ctx *gin.Context, req Req) (Result[Res], err
 
 	return method, path, func(ctx *gin.Context) {
 		var req Req
+
 		if err := ctx.Bind(&req); err != nil {
+			ctx.JSON(http.StatusOK, Result[Res]{
+				Code: 5,
+				Msg:  "参数错误" + err.Error(),
+			})
+			return
+		}
+
+		if err := ctx.BindUri(&req); err != nil {
 			ctx.JSON(http.StatusOK, Result[Res]{
 				Code: 5,
 				Msg:  "参数错误" + err.Error(),

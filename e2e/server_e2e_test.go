@@ -11,7 +11,7 @@ import (
 )
 
 func TestServer(t *testing.T) {
-	server := ginx.NewServer()
+	server := ginx.NewServer("8081")
 	server.Handle(ginx.Wrap[userGetReq, userGetRes](getUser))
 
 	marshal, err := json.Marshal(ginx.Oai.Description())
