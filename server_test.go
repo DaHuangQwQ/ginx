@@ -85,7 +85,6 @@ func TestServer_RegisterOpenAPIMiddleware(t *testing.T) {
 	}
 	server.Use(builder.BuildActiveRequest())
 	server.Use(builder.BuildResponseTime())
-	server.RegisterOpenAPIMiddleware()
 	server.Handle(Wrap[UserGetReq, UserGetRes](getUser))
 
 	server.RegisterOpenAPIRoutes("/openapi")

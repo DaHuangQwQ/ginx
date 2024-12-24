@@ -30,6 +30,11 @@ func (s *Server) Handle(method, path string, handler gin.HandlerFunc) {
 	s.Engine.Handle(method, path, handler)
 }
 
+func (s *Server) Use(middleware ...gin.HandlerFunc) {
+	s.Engine.Use(middleware...)
+	s.registerOpenAPIMiddleware()
+}
+
 func (s *Server) Start() error {
 	return s.Engine.Run(s.addr)
 }
@@ -81,7 +86,7 @@ func (s *Server) RegisterOpenAPIRoutes(path string) {
 	)))
 }
 
-func (s *Server) RegisterOpenAPIMiddleware() {
+func (s *Server) registerOpenAPIMiddleware() {
 	middlewares = s.Engine.Handlers
 }
 
